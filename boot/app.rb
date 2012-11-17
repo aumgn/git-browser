@@ -7,13 +7,8 @@ module GitBrowser
       set :root, GitBrowser::Root
 
       get '/' do
-         @repositories = [
-            Repository.new('test', 'test', 'Test repository'),
-            Repository.new('test2', 'test2', 'Test2 repository')
-         ]
+         @repositories = Repositories.map.to_a
          erb :index
       end
    end
-
-   Repository = Struct.new(:name, :path, :description)
 end

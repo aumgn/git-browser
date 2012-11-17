@@ -36,10 +36,13 @@ module GitBrowser
       bool
    end
 
-
    require 'bundler'
    Bundler.setup(:default, Env)
 
    require 'yaml'
    Config = YAML.load_file path('boot', 'config.yml')
+
+   require './lib/repositories_list'
+   Repositories = RepositoriesList.new(Config['repositories'],
+      Config['hidden'])
 end
