@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'mustache/sinatra'
 require './lib/repository_path'
+require './lib/linguist'
 
 module GitBrowser
 
