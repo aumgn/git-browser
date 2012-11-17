@@ -7,6 +7,7 @@ GEM
       mime-types (~> 1.15)
       posix-spawn (~> 0.3.6)
     mime-types (1.19)
+    mustache (0.99.4)
     posix-spawn (0.3.6)
     rack (1.4.1)
     rack-protection (1.2.0)
@@ -23,5 +24,6 @@ PLATFORMS
 
 DEPENDENCIES
   grit
+  mustache
   rake
   sinatra

@@ -11,10 +11,10 @@
 </head>
 
 <body>
-   <%= erb :navigation %>
+   {{> navigation }}
 
    <div class="container">
-      <%= yield %>
+      {{{ yield }}}
    </div>
 
    <script src="/js/jquery.js"></script>

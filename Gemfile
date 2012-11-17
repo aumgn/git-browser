@@ -4,3 +4,4 @@ source :rubygems
 gem 'rake'
 gem 'sinatra'
 gem 'grit'
+gem 'mustache'

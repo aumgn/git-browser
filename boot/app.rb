@@ -1,10 +1,18 @@
 require 'sinatra/base'
+require 'mustache/sinatra'
 
 module GitBrowser
 
    class App < Sinatra::Base
       set :environment, GitBrowser::Env
       set :root, GitBrowser::Root
+
+      register Mustache::Sinatra
+      require './views/layout'
+      set :mustache, {
+         :views => './views/',
+         :templates => 'templates/'
+      }
 
       helpers do
          def tree(repo_name, branch = 'master', path = nil)
@@ -22,13 +30,13 @@ module GitBrowser
             end
             @branch = branch
             @files = @tree.trees + @tree.blobs
-            erb :tree
+            mustache :tree
          end
       end
 
       get '/' do
          @repositories = Repositories.map.to_a
-         erb :index
+         mustache :index
       end
 
       get %r{/(.+)/tree/?$} do |repo|
