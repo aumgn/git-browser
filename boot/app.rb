@@ -24,7 +24,7 @@ module GitBrowser
                @tree = @repo.tree branch
             else
                path = path + '/' unless path[-1] == ?/
-               @parent = '/'
+               @parent = "/#{@repo.name}/tree/#{branch}/#{path}.."
                @tree = @repo.tree branch, path + '/'
                raise Sinatra::NotFound if @tree.nil?
             end
