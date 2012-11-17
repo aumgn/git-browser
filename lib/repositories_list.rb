@@ -37,6 +37,8 @@ module GitBrowser
          true
       rescue Grit::InvalidGitRepositoryError
          false
+      rescue Grit::NoSuchPathError
+         false
       end
       alias exists? include?
 

@@ -1,0 +1,40 @@
+<table class="tree">
+    <thead>
+        <tr>
+            <th width="80%">name</th>
+            <th width="10%">mode</th>
+            <th width="10%">size</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% unless @parent.nil? %>
+        <tr>
+            <td>
+                <i class="icon-spaced"></i>
+                <a href="<%= @parent %>">..</a>
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+        <% end %>
+        <% for file in @files %>
+        <tr>
+            <td>
+                <% if file.is_a? Grit::Tree %>
+                    <i class="icon-folder-open icon-spaced"></i>
+                    <a href="/<%= @repo.name %>/tree/<%= @branch %>/<%= file.name %>">
+                        <%= file.basename %>
+                    </a>
+                <% else %>
+                    <i class="icon-file icon-spaced"></i>
+                    <a href="/<%= @repo.name %>/blob/<%= @branch %>/<%= file.name %>">
+                        <%= file.basename %>
+                    </a>
+                <% end %>
+            </td>
+            <td><%= file.mode %></td>
+            <td><% if file.is_a? Grit::Blob %><%= file.size / 1000 %> kb<% end %></td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>
