@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'mustache/sinatra'
+require './lib/repository_path'
 
 module GitBrowser
 
@@ -15,22 +16,14 @@ module GitBrowser
       }
 
       helpers do
-         def tree(repo_name, branch = 'master', path = nil)
-            pass unless Repositories.exists? repo_name
-            @repo = Repositories.get repo_name
-            raise Sinatra::NotFound unless @repo.is_head? branch
-            if path.nil?
-               @parent = nil
-               @tree = @repo.tree branch
-            else
-               path = path + '/' unless path[-1] == ?/
-               @parent = "/#{@repo.name}/tree/#{branch}/#{path}.."
-               @tree = @repo.tree branch, path + '/'
-               raise Sinatra::NotFound if @tree.nil?
-            end
-            @branch = branch
-            @files = @tree.trees + @tree.blobs
+
+         def tree(repo_name, reference = 'master', path = nil)
+            @repo_path = RepositoryPath.new(repo_name, reference, path)
+            @tree = @repo_path.tree_blob
+            raise Sinatra::NotFound unless @tree.is_a? Grit::Tree
             mustache :tree
+         rescue RepositoryPath::Error
+            raise Sinatra::NotFound
          end
       end
 
@@ -39,16 +32,27 @@ module GitBrowser
          mustache :index
       end
 
-      get %r{/(.+)/tree/?$} do |repo|
-         tree repo
+      get %r{/(.+)/tree/?$} do |repo_name|
+         tree repo_name
       end
 
-      get %r{/(.+)/tree/([^/]+)/?$} do |repo, branch|
-         tree repo, branch
+      get %r{/(.+)/tree/([^/]+)/?$} do |repo_name, reference|
+         tree repo_name, reference
       end
 
-      get %r{/(.+)/tree/([^/]+)/(.+)$} do |repo, branch, path|
-         tree repo, branch, path
+      get %r{/(.+)/tree/([^/]+)/(.+)/?$} do |repo_name, reference, path|
+         tree repo_name, reference, path
+      end
+
+      get %r{/(.+)/blob/([^/]+)/(.+)$} do |repo_name, reference, path|
+         begin
+            @repo_path = RepositoryPath.new(repo_name, reference, path)
+         rescue RepositoryPath::Error
+            raise Sinatra::NotFound
+         end
+         @blob = @repo_path.tree_blob
+         raise Sinatra::NotFound unless @blob.is_a? Grit::Blob
+         mustache :blob
       end
    end
 end

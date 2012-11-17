@@ -4,9 +4,8 @@ module GitBrowser::App::Views
 
       class Entry
 
-         def initialize(repo, branch, tree_blob)
-            @repo = repo
-            @branch = branch
+         def initialize(repo_path, tree_blob)
+            @repo_path = repo_path
             @tree_blob = tree_blob
          end
 
@@ -19,11 +18,8 @@ module GitBrowser::App::Views
          end
 
          def link
-            link = "/#{@repo.name}"
-            link << (directory? ? "/tree" : "blob")
-            link << '/' << @branch
-            link << '/' << @tree_blob.name
-            link
+            type = directory? ? 'tree' : 'blob'
+            @repo_path.child_url type, @tree_blob.basename
          end
 
          def name
@@ -41,15 +37,17 @@ module GitBrowser::App::Views
       end
 
       def parent?
-         !!@parent
+         @repo_path.parent?
       end
 
       def parent
-         @parent
+         @repo_path.parent_url
       end
 
       def files
-         @files.map { |file| Entry.new(@repo, @branch, file) }
+         (@tree.trees + @tree.blobs).map do |tree_blob|
+            Entry.new(@repo_path, tree_blob)
+         end
       end
    end
 end
