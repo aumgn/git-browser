@@ -4,10 +4,21 @@
 <head>
    <meta charset="UTF-8" />
    <title>Git Browser</title>
+   <link rel="stylesheet" type="text/css" href="/css/style.css">
+   <!--[if lt IE 9]>
+      <script src="{{ app.request.basepath }}/web/js/html5.js"></script>
+   <![endif]-->
 </head>
 
 <body>
-   Git Browser
+   <%= erb :navigation %>
+
+   <div class="container">
+      <%= yield %>
+   </div>
+
+   <script src="/js/jquery.js"></script>
+   <script src="/js/bootstrap.js"></script>
 </body>
 
 </html>

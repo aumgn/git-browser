@@ -3,3 +3,5 @@ log/
 .bundle/
 
 boot/config.yml
+
+public/css/style.css

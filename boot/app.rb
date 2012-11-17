@@ -7,7 +7,13 @@ module GitBrowser
       set :root, GitBrowser::Root
 
       get '/' do
-         erb :layout
+         @repositories = [
+            Repository.new('test', 'test', 'Test repository'),
+            Repository.new('test2', 'test2', 'Test2 repository')
+         ]
+         erb :index
       end
    end
+
+   Repository = Struct.new(:name, :path, :description)
 end
