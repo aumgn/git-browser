@@ -1,0 +1,68 @@
+<div class="commit-view">
+    <div class="commit-header">
+        <span class="pull-right">
+            <a class="btn btn-small"
+                    href="{{ browse_link }}"
+                    title="Browse code at this point in history">
+                <i class="icon-list-alt"></i> Browse code
+            </a>
+        </span>
+        <h4>{{ message }}</h4>
+    </div>
+    <div class="commit-body">
+        <img src="{{ author_avatar32 }}" class="pull-left space-right" />
+        <span>
+            <a href="mailto:{{ author_email }}">{{ author_name }}</a>
+            authored in {{ date }}
+            <br />
+            Showing {{ changed_files }} changed files
+        </span>
+    </div>
+</div>
+
+<ul class="commit-list">
+    {{# diffs_stat }}
+        <li>
+            <i class="icon-file"></i>
+            <a href="#{{ id }}">{{ name }}</a>
+            <span class="meta pull-right">{{ summary }}</span>
+        </li>
+    {{/ diffs_stat }}
+</ul>
+
+{{# diffs }}
+<div class="source-view">
+    <div class="source-header">
+        <div class="meta"><a name="{{ id }}">{{ name }}</div>
+
+        <div class="btn-group pull-right">
+            <a href="" class="btn btn-small">
+                <i class="icon-list-alt"></i> History
+            </a>
+            <a href="" class="btn btn-small">
+                <i class="icon-file"></i> View file @ {{ short_hash }}
+            </a>
+        </div>
+    </div>
+
+    <div class="source-diff">
+    <table>
+    {{# lines }}
+        <tr>
+            <td class="lineNo">
+                {{ old_number }}
+            </td>
+            <td class="lineNo">
+                {{ new_number }}
+            </td>
+            <td style="width: 100%">
+                <pre class="{{ type }}">{{ content }}</pre>
+            </td>
+        </tr>
+    {{/ lines }}
+    </table>
+    </div>
+</div>
+{{/ diffs }}
+
+<hr />

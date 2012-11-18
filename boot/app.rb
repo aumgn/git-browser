@@ -97,6 +97,16 @@ module GitBrowser
          commits repo_name, branch
       end
 
+      get %r{/(.+)/commit/([a-f0-9^]+)/?$} do |repo_name, commit_id|
+         raise Sinatra::NotFound unless Repositories.exists? repo_name
+         @repo = Repositories.get repo_name
+
+         @commit = @repo.commit commit_id
+         raise Sinatra::NotFound if @commit.nil?
+
+         mustache :commit
+      end
+
       get %r{/(.+)/blame/([^/]+)/(.+)$} do |repo_name, reference, path|
          @blob = blob_for repo_name, reference, path
          @blame = @repo_path.blame
