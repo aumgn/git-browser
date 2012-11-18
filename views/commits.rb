@@ -2,7 +2,7 @@ require 'digest/md5'
 
 module GitBrowser::App::Views
 
-   class Commit
+   class CommitEntry
 
       attr_reader :link, :short_hash, :date, :message
       attr_reader :author_avatar, :author_name, :author_email
@@ -28,7 +28,7 @@ module GitBrowser::App::Views
 
       def initialize(date, commits)
          @date = date
-         @commits = commits.map { |c| Commit.new(c) }
+         @commits = commits.map { |c| CommitEntry.new(c) }
       end
    end
 

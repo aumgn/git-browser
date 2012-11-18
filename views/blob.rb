@@ -27,11 +27,11 @@ module GitBrowser::App::Views
       end
 
       def raw_link
-         @repo_path.url 'raw'
+         @repobrowser.url 'raw'
       end
 
       def blame_link
-         @repo_path.url 'blame'
+         @repobrowser.url 'blame'
       end
 
    private

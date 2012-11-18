@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'mustache/sinatra'
-require './lib/repository_path'
+
+require './lib/repository_browser'
 require './lib/file_types'
 
 module GitBrowser
@@ -20,37 +21,25 @@ module GitBrowser
 
       helpers do
 
-         def tree(repo_name, reference = 'master', path = nil)
-            @repo_path = RepositoryPath.new(repo_name, reference, path)
-            @tree = @repo_path.tree_blob
-            raise Sinatra::NotFound unless @tree.is_a? Grit::Tree
-            mustache :tree
-         rescue RepositoryPath::Error
+         def tree(*args)
+            @repobrowser = RepositoryBrowser.new(*args)
+            @repobrowser.tree
+         rescue RepositoryBrowser::Error
             raise Sinatra::NotFound
          end
 
-         def blob_for(repo_name, reference, path)
-            begin
-               @repo_path = RepositoryPath.new(repo_name, reference, path)
-            rescue RepositoryPath::Error
-               raise Sinatra::NotFound
-            end
-            blob = @repo_path.tree_blob
-            raise Sinatra::NotFound unless blob.is_a? Grit::Blob
-            blob
+         def blob(*args)
+            @repobrowser = RepositoryBrowser.new(*args)
+            @repobrowser.blob
+         rescue RepositoryBrowser::Error
+            raise Sinatra::NotFound
          end
 
-         def commits(repo_name, reference = 'master')
-            raise Sinatra::NotFound unless Repositories.exists? repo_name
-            @repo = Repositories.get repo_name
-
-            raise Sinatra::NotFound unless @repo.is_head? reference
-            @reference = reference
-
-            @page = params[:page] || 0
-            @commits = @repo.commits(reference, COMMITS_PER_PAGE,
-               @page * COMMITS_PER_PAGE)
-            mustache :commits
+         def commits(*args)
+            @repobrowser = RepositoryBrowser.new(*args)
+            @repobrowser.commits(params[:page] || 0)
+         rescue RepositoryBrowser::Error
+            raise Sinatra::NotFound
          end
       end
 
@@ -59,25 +48,20 @@ module GitBrowser
          mustache :index
       end
 
-      get %r{/(.+)/tree/?$} do |repo_name|
-         tree repo_name
+      optional_branch_and_path = '(?:/([^/]+)(?:/(.+?))?)?/?$'
+      get %r{/(.+)/tree#{optional_branch_and_path}} do |*args|
+         @tree = tree *args
+         mustache :tree
       end
 
-      get %r{/(.+)/tree/([^/]+)/?$} do |repo_name, reference|
-         tree repo_name, reference
-      end
-
-      get %r{/(.+)/tree/([^/]+)/(.+)/?$} do |repo_name, reference, path|
-         tree repo_name, reference, path
-      end
-
-      get %r{/(.+)/blob/([^/]+)/(.+)$} do |repo_name, reference, path|
-         @blob = blob_for repo_name, reference, path
+      get %r{/(.+)/blob/([^/]+)/(.+)$} do |*args|
+         @blob = blob *args
          mustache :blob
       end
 
-      get %r{/(.+)/raw/([^/]+)/(.+)$} do |repo_name, reference, path|
-         @blob = blob_for repo_name, reference, path
+      get %r{/(.+)/raw/([^/]+)/(.+)$} do |*args|
+         @blob = blob *args
+
          if @blob.binary?
             headers 'Content-Disposition' =>
                      "attachment; filename=\"#{@blob.basename}\"",
@@ -89,12 +73,15 @@ module GitBrowser
          @blob.data
       end
 
-      get %r{/(.+)/commits/?$} do |repo_name|
-         commits repo_name
+      get %r{/(.+)/blame/([^/]+)/(.+)$} do |*args|
+         @blob = blob *args
+         @blame = @repobrowser.blame
+         mustache :blame
       end
 
-      get %r{/(.+)/commits/([^/]+)?$} do |repo_name, branch|
-         commits repo_name, branch
+      get %r{/(.+)/commits#{optional_branch_and_path}} do |*args|
+         @commits = commits *args
+         mustache :commits
       end
 
       get %r{/(.+)/commit/([a-f0-9^]+)/?$} do |repo_name, commit_id|
@@ -105,12 +92,6 @@ module GitBrowser
          raise Sinatra::NotFound if @commit.nil?
 
          mustache :commit
-      end
-
-      get %r{/(.+)/blame/([^/]+)/(.+)$} do |repo_name, reference, path|
-         @blob = blob_for repo_name, reference, path
-         @blame = @repo_path.blame
-         mustache :blame
       end
    end
 end

@@ -4,8 +4,8 @@ module GitBrowser::App::Views
 
       class Entry
 
-         def initialize(repo_path, tree_blob)
-            @repo_path = repo_path
+         def initialize(repobrowser, tree_blob)
+            @repobrowser = repobrowser
             @tree_blob = tree_blob
          end
 
@@ -19,7 +19,7 @@ module GitBrowser::App::Views
 
          def link
             type = directory? ? 'tree' : 'blob'
-            @repo_path.child_url type, @tree_blob.basename
+            @repobrowser.child_url type, @tree_blob.basename
          end
 
          def name
@@ -37,16 +37,16 @@ module GitBrowser::App::Views
       end
 
       def parent?
-         @repo_path.parent?
+         @repobrowser.parent?
       end
 
       def parent
-         @repo_path.parent_url
+         @repobrowser.parent_url
       end
 
       def files
          (@tree.trees + @tree.blobs).map do |tree_blob|
-            Entry.new(@repo_path, tree_blob)
+            Entry.new(@repobrowser, tree_blob)
          end
       end
    end
