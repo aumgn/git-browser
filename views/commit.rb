@@ -16,7 +16,7 @@ module GitBrowser::App::Views
       end
 
       def summary
-         "A#{@stat.additions} D#{@stat.deletions} N#{@stat.net}"
+         "+#{@stat.additions} -#{@stat.deletions} ~#{@stat.net}"
       end
    end
 

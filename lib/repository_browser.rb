@@ -60,6 +60,10 @@ module GitBrowser
          url_for_reference type, reference
       end
 
+      def commit_url(commit)
+         url_without_reference('commit') << '/' << commit.id_abbrev
+      end
+
       def child_url(type, name)
          "#{url type}/#{name}"
       end

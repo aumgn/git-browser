@@ -92,12 +92,9 @@ module GitBrowser
       end
 
       get %r{/(.+)/commit/([a-f0-9^]+)/?$} do |repo_name, commit_id|
-         raise Sinatra::NotFound unless Repositories.exists? repo_name
-         @repo = Repositories.get repo_name
-
-         @commit = @repo.commit commit_id
+         @repobrowser = RepositoryBrowser.new repo_name
+         @commit = @repobrowser.commit commit_id
          raise Sinatra::NotFound if @commit.nil?
-
          mustache :commit
       end
 

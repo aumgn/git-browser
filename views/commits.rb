@@ -7,8 +7,8 @@ module GitBrowser::App::Views
       attr_reader :link, :short_hash, :date, :message
       attr_reader :author_avatar, :author_name, :author_email
 
-      def initialize(commit)
-         @link = '/'
+      def initialize(repobrowser, commit)
+         @link = repobrowser.commit_url commit
          @short_hash = commit.id_abbrev
          @date = commit.date.strftime('%d/%m/%Y at %H:%M:%S')
          @message = commit.message.split("\n")[0]
@@ -26,9 +26,9 @@ module GitBrowser::App::Views
 
       attr_reader :date, :commits
 
-      def initialize(date, commits)
+      def initialize(repobrowser, date, commits)
          @date = date
-         @commits = commits.map { |c| CommitEntry.new(c) }
+         @commits = commits.map { |c| CommitEntry.new(repobrowser, c) }
       end
    end
 
@@ -43,7 +43,9 @@ module GitBrowser::App::Views
       def commits_by_dates
          @by_date ||= @commits.group_by do |c|
             c.date.strftime('%m/%d/%Y')
-         end.map { |date, commit| CommitsByDate.new(date, commit) }
+         end.map do |date, commit|
+            CommitsByDate.new(@repobrowser, date, commit)
+         end
       end
    end
 end
