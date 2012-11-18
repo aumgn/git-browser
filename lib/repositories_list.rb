@@ -11,6 +11,10 @@ module GitBrowser
          @name = name
       end
 
+      def display_name
+         @name.gsub(/\.git$/, '')
+      end
+
       def description
          if File.exists?(File.join(path, 'description'))
             super

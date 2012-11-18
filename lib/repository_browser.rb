@@ -19,7 +19,7 @@ module GitBrowser
       end
 
       def repository_name
-         @repo.name
+         @repo.display_name
       end
 
       def reference
