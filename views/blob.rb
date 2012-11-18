@@ -2,8 +2,6 @@ module GitBrowser::App::Views
 
    class Blob < Layout
 
-      ImagesType = [ 'png', 'jpg', 'gif', 'jpeg', 'bmp' ]
-
       def sourcecode?
          true
       end
@@ -17,7 +15,7 @@ module GitBrowser::App::Views
       end
 
       def image?
-         file_type == 'image'
+         @blob.image?
       end
 
       def markdown?
@@ -28,11 +26,13 @@ module GitBrowser::App::Views
          !image? && !markdown?
       end
 
+      def raw_link
+         @repo_path.url 'raw'
+      end
+
    private
 
       def get_file_type
-         split = @blob.basename.split('.')
-         return 'image' if split.size > 1 and ImagesType.include?(split[-1])
          language = @blob.language
          return nil if language.nil?
          return language.name.downcase

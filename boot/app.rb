@@ -1,7 +1,7 @@
 require 'sinatra/base'
 require 'mustache/sinatra'
 require './lib/repository_path'
-require './lib/linguist'
+require './lib/file_types'
 
 module GitBrowser
 
@@ -27,6 +27,17 @@ module GitBrowser
             mustache :tree
          rescue RepositoryPath::Error
             raise Sinatra::NotFound
+         end
+
+         def blob_for(repo_name, reference, path)
+            begin
+               @repo_path = RepositoryPath.new(repo_name, reference, path)
+            rescue RepositoryPath::Error
+               raise Sinatra::NotFound
+            end
+            blob = @repo_path.tree_blob
+            raise Sinatra::NotFound unless blob.is_a? Grit::Blob
+            blob
          end
 
          def commits(repo_name, reference = 'master')
@@ -61,14 +72,21 @@ module GitBrowser
       end
 
       get %r{/(.+)/blob/([^/]+)/(.+)$} do |repo_name, reference, path|
-         begin
-            @repo_path = RepositoryPath.new(repo_name, reference, path)
-         rescue RepositoryPath::Error
-            raise Sinatra::NotFound
-         end
-         @blob = @repo_path.tree_blob
-         raise Sinatra::NotFound unless @blob.is_a? Grit::Blob
+         @blob = blob_for repo_name, reference, path
          mustache :blob
+      end
+
+      get %r{/(.+)/raw/([^/]+)/(.+)$} do |repo_name, reference, path|
+         @blob = blob_for repo_name, reference, path
+         if @blob.binary?
+            headers 'Content-Disposition' =>
+                     "attachment; filename=\"#{@blob.basename}\"",
+               'Content-Transfer-Encoding' => 'application/octet-stream',
+               'Content-Transfer-Encoding' => 'binary'
+         else
+             headers 'Content-Transfer-Encoding' => 'text/plain'
+         end
+         @blob.data
       end
 
       get %r{/(.+)/commits/?$} do |repo_name|
