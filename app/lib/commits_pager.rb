@@ -14,8 +14,7 @@ module GitBrowser
       end
 
       def commits
-         @repobrowser.repo.commits(@repobrowser.reference, @commits_per_page,
-               @page * @commits_per_page)
+         @repobrowser.commits(@commits_per_page, @page * @commits_per_page)
       end
 
       def previous_page?

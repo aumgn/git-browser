@@ -22,7 +22,9 @@ module GitBrowser::App::Views
 
    class Diff
 
-      def initialize(index, diff)
+      def initialize(repobrowser, commit, index, diff)
+         @repobrowser = repobrowser
+         @commit = commit
          @index = index
          @diff = diff
       end
@@ -40,6 +42,18 @@ module GitBrowser::App::Views
          @diff.diff.each_line.to_a[3..-1].map do |line|
             DiffLine.new(counter, line)
          end
+      end
+
+      def short_hash
+         @commit.id_abbrev
+      end
+
+      def history_link
+         @repobrowser.url_for_path('commits', @diff.b_path)
+      end
+
+      def view_link
+         @repobrowser.url_for_path('blob', @diff.b_path)
       end
    end
 
@@ -98,7 +112,7 @@ module GitBrowser::App::Views
       end
 
       def browse_link
-         '/'
+         @repobrowser.url_for_reference 'tree', @commit.id_abbrev
       end
 
       def message
@@ -134,7 +148,7 @@ module GitBrowser::App::Views
 
       def diffs
          @diffs ||= @commit.diffs.each_with_index.map do |diff, index|
-            Diff.new(index, diff)
+            Diff.new(@repobrowser, @commit, index, diff)
          end
       end
 

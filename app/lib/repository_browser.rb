@@ -4,12 +4,12 @@ module GitBrowser
 
    class RepositoryBrowser
 
-      attr :repo
+      attr_reader :repo, :reference
 
       def initialize(repo_name, reference = nil, path = nil)
          raise RepositoryNotFound unless Repositories.exists? repo_name
          @repo = Repositories.get repo_name
-         self.reference = reference unless reference.nil?
+         self.reference = reference || 'master'
          self.path = path unless path.nil?
       end
 
@@ -17,12 +17,11 @@ module GitBrowser
          @repo.display_name
       end
 
-      def reference
-         @reference || 'master'
-      end
-
       def reference=(reference)
-         raise ReferenceNotFound unless @repo.is_head? reference
+         reference ||= 'master'
+         if !@repo.is_head?(reference) and @repo.commit(reference).nil?
+            raise ReferenceNotFound
+         end
          @reference = reference
       end
 
@@ -39,8 +38,7 @@ module GitBrowser
       end
 
       def url(type)
-         url = "/#{@repo.name}/#{type}/#{reference}/#{path.to_s}"
-         url[-1] == ?/ ? url[0...-1] : url
+         url_for_path(type, path)
       end
 
       def url_without_reference(type)
@@ -53,6 +51,11 @@ module GitBrowser
 
       def url_without_path(type)
          url_for_reference type, reference
+      end
+
+      def url_for_path(type, path)
+         url = "/#{@repo.name}/#{type}/#{reference}/#{path.to_s}"
+         url[-1] == ?/ ? url[0...-1] : url
       end
 
       def commit_url(commit)
@@ -112,12 +115,16 @@ module GitBrowser
          Grit::Blob.blame(@repo, reference, path)
       end
 
+      def commits(number, skip)
+         @repo.log(reference, path || '.', n: number, skip: skip)
+      end
+
       def commits_pager(page = 0)
          CommitsPager.new(self, page)
       end
 
-      def commit(id)
-         @repo.commit(id)
+      def commit
+         @repo.commit(reference)
       end
 
       def archive(format)
@@ -162,3 +169,5 @@ module GitBrowser
       end
    end
 end
+
+

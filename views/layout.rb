@@ -50,12 +50,7 @@ class GitBrowser::App
          end
 
          def branches
-            @repobrowser.branches.map do |branch|
-               {
-                  name: branch.name,
-                  url: @repobrowser.url_for_reference('tree', branch.name)
-               }
-            end
+            wrap_references @repobrowser.branches
          end
 
          def tags?
@@ -63,7 +58,7 @@ class GitBrowser::App
          end
 
          def tags
-            @tags ||= @repobrowser.tags
+            @tags ||= wrap_references @repobrowser.tags
          end
 
          def files_page?
@@ -96,6 +91,17 @@ class GitBrowser::App
 
          def targz_link
             @repobrowser.url_without_path 'targzball'
+         end
+
+      private
+
+         def wrap_references(references)
+            references.map do |ref|
+               {
+                  name: ref.name,
+                  url: @repobrowser.url_for_reference('tree', ref.name)
+               }
+            end
          end
       end
    end
