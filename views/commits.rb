@@ -34,6 +34,8 @@ module GitBrowser::App::Views
 
    class Commits < ProjectPageLayout
 
+      breadcrumbs 'Commit history'
+
       def commits_page?
          true
       end

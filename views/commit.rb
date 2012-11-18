@@ -89,6 +89,10 @@ module GitBrowser::App::Views
 
    class Commit < ProjectPageLayout
 
+      def breadcrumps
+         [{ directory: "Commit #{@commit.id_abbrev}", path: ''}]
+      end
+
       def commits_page?
          true
       end

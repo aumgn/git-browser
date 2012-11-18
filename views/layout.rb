@@ -11,12 +11,38 @@ class GitBrowser::App
 
       class ProjectPageLayout < Layout
 
+         def self.breadcrumbs(directory, path = '')
+            class_eval <<-END
+               def breadcrumbs
+                  [{ directory: '#{directory}', path: '#{path}' }]
+               end
+            END
+         end
+
          def project_page?
             true
          end
 
          def branches?
             true
+         end
+
+         def repository_name
+            @repobrowser.repository_name
+         end
+
+         def repository_url
+            @repobrowser.url_without_reference 'tree'
+         end
+
+         def breadcrumbs_it
+            b = breadcrumbs.each { |b| { last?: false }.merge(b) }
+            b[-1][:last?] = true unless b.empty?
+            b
+         end
+
+         def breadcrumbs
+            []
          end
 
          def current_branch
@@ -62,6 +88,14 @@ class GitBrowser::App
 
          def stats_link
             @repobrowser.url_without_reference 'stats'
+         end
+
+         def tar_link
+            @repobrowser.url_without_path 'tarball'
+         end
+
+         def targz_link
+            @repobrowser.url_without_path 'targzball'
          end
       end
    end

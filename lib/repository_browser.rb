@@ -18,6 +18,10 @@ module GitBrowser
          self.path = path unless path.nil?
       end
 
+      def repository_name
+         @repo.name
+      end
+
       def reference
          @reference || 'master'
       end
@@ -72,6 +76,18 @@ module GitBrowser
          @repo.tags
       end
 
+      def path_breadcrumbs
+         breadcrumbs = []
+         unless path.nil?
+            url = url_without_path 'tree'
+            @path.split('/').map do |fragment|
+               url = url + '/' + fragment
+               breadcrumbs << { directory: fragment, url: url }
+            end
+         end
+         breadcrumbs
+      end
+
       def tree_blob
          tree_blob = @repo.tree(reference)
          unless @path.nil?
@@ -103,6 +119,14 @@ module GitBrowser
 
       def commit(id)
          @repo.commit(id)
+      end
+
+      def archive(format)
+         if format == 'tar'
+            @repo.archive_tar reference
+         else
+            @repo.archive_tar_gz reference
+         end
       end
    end
 end

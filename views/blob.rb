@@ -6,6 +6,10 @@ module GitBrowser::App::Views
          true
       end
 
+      def breadcrumbs
+         @repobrowser.path_breadcrumbs
+      end
+
       def sourcecode?
          true
       end

@@ -22,6 +22,8 @@ module GitBrowser::App::Views
 
    class Blame < ProjectPageLayout
 
+      breadcrumbs 'Blame'
+
       def commits_page?
          true
       end

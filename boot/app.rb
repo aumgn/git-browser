@@ -105,5 +105,22 @@ module GitBrowser
          stats repo_name
          mustache :stats
       end
+
+      get %r{/(.+)/(tar(?:gz)?)ball(?:/([^/]+))?/?} do |repo_name, format, reference = nil|
+         begin
+            repobrowser = RepositoryBrowser.new(repo_name, reference)
+         rescue RepositoryBrowser::Error
+            raise Sinatra::NotFound
+         end
+         ctype = format == 'tar' ? 'application/x-tar' : 'application/x-tgz'
+         filename = File.basename(repobrowser.repository_name)
+         filename << '-' << repobrowser.reference
+         filename << '.' << (format == 'tar' ? 'tar' : 'tar.gz')
+         headers 'Content-type' => ctype,
+               'Content-Description' => 'File Transfer',
+               'Content-Disposition' => "attachment; filename=\"#{filename}\"",
+               'Content-Transfer-Encoding' => 'binary'
+         repobrowser.archive format
+      end
    end
 end

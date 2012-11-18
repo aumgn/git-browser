@@ -1,0 +1,28 @@
+<ul class="breadcrumb">
+
+   <li><a href="{{ repository_url }}">{{ repository_name }}</a></li>
+   {{# breadcrumbs_it }}
+      <span class="divider">/</span>
+      <li>
+         {{^ last? }}<a href="{{ url }}">{{/ last? }}
+            {{ directory }}
+         {{^ last? }}</a>{{/ last? }}
+      </li>
+    {{/ breadcrumbs_it }}
+
+   <div class="pull-right">
+      <div class="btn-group download-buttons">
+         <a href="{{ tar_link }}" class="btn btn-mini"
+               title="Download '{{ current_branch }}' as a TAR archive">
+            TAR
+         </a>
+         <a href="{{ targz_link }}" class="btn btn-mini"
+               title="Download '{{ current_branch }}' as a TAR.GZ archive">
+            TAR.GZ
+         </a>
+      </div>
+      <a href="" class="rss-icon">
+         <i class="rss"></i>
+      </a>
+   </div>
+</ul>
