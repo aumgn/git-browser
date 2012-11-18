@@ -96,5 +96,11 @@ module GitBrowser
       get %r{/(.+)/commits/([^/]+)?$} do |repo_name, branch|
          commits repo_name, branch
       end
+
+      get %r{/(.+)/blame/([^/]+)/(.+)$} do |repo_name, reference, path|
+         @blob = blob_for repo_name, reference, path
+         @blame = @repo_path.blame
+         mustache :blame
+      end
    end
 end

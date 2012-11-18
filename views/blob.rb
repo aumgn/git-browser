@@ -30,6 +30,10 @@ module GitBrowser::App::Views
          @repo_path.url 'raw'
       end
 
+      def blame_link
+         @repo_path.url 'blame'
+      end
+
    private
 
       def get_file_type

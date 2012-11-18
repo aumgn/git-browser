@@ -1,0 +1,17 @@
+<div class="source-view">
+    <div class="source-header">
+        <div class="meta">{{ name }}</div>
+    </div>
+    <table class="blame-view">
+    {{# blames }}
+        <tr>
+            <td class="commit">
+                <a href="{{ commit_link }}">
+                    {{ commit_short_hash }}
+                </a>
+            </td>
+            <td><pre>{{ lines }}</pre></td>
+        </tr>
+    {{/ blames }}
+    </table>
+</div>

@@ -53,5 +53,9 @@ module GitBrowser
       def tree_blob
          @tree_blob
       end
+
+      def blame
+         Grit::Blob.blame(@repo, @reference, @filepath)
+      end
    end
 end
