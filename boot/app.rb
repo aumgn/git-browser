@@ -16,6 +16,8 @@ module GitBrowser
          :templates => 'templates/'
       }
 
+      COMMITS_PER_PAGE = 15
+
       helpers do
 
          def tree(repo_name, reference = 'master', path = nil)
@@ -25,6 +27,19 @@ module GitBrowser
             mustache :tree
          rescue RepositoryPath::Error
             raise Sinatra::NotFound
+         end
+
+         def commits(repo_name, reference = 'master')
+            raise Sinatra::NotFound unless Repositories.exists? repo_name
+            @repo = Repositories.get repo_name
+
+            raise Sinatra::NotFound unless @repo.is_head? reference
+            @reference = reference
+
+            @page = params[:page] || 0
+            @commits = @repo.commits(reference, COMMITS_PER_PAGE,
+               @page * COMMITS_PER_PAGE)
+            mustache :commits
          end
       end
 
@@ -54,6 +69,14 @@ module GitBrowser
          @blob = @repo_path.tree_blob
          raise Sinatra::NotFound unless @blob.is_a? Grit::Blob
          mustache :blob
+      end
+
+      get %r{/(.+)/commits/?$} do |repo_name|
+         commits repo_name
+      end
+
+      get %r{/(.+)/commits/([^/]+)?$} do |repo_name, branch|
+         commits repo_name, branch
       end
    end
 end
