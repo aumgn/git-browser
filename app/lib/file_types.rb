@@ -1,34 +1,38 @@
-require 'linguist'
+require 'yaml'
 
 module GitBrowser
 
    module FileTypes
 
-      include Linguist::BlobHelper
+      yaml = YAML.load_file GitBrowser.path('app', 'conf', 'filetypes.yml')
 
-      BinaryTypes = [
-        'exe', 'com', 'so', 'la', 'o', 'dll', 'pyc', 'jpg', 'jpeg', 'bmp',
-        'gif', 'png', 'xmp', 'pcx', 'svgz', 'ttf', 'tiff', 'oet', 'gz', 'tar',
-        'rar', 'zip', '7z', 'jar', 'class', 'odt', 'ods', 'pdf', 'doc', 'docx',
-        'dot', 'xls', 'xlsx',
-      ]
-
-      ImageTypes = [ 'png', 'jpg', 'gif', 'jpeg', 'bmp' ]
+      FileTypesByName = yaml['by_filename']
+      FileTypesByExtension = yaml['by_extension']
 
       def binary?
-         extension_in? BinaryTypes
+         filetype == 'binary'
       end
 
       def image?
-         extension_in? ImageTypes
+         filetype == 'image'
+      end
+
+      def filetype
+         @filetype ||= guess_filetype
       end
 
    private
 
-      def extension_in?(ary)
-         ext = File.extname(basename)
-         return false if ext.empty?
-         ary.include? ext[1..-1]
+      def guess_filetype
+         by_extension || by_name || 'binary'
+      end
+
+      def by_extension
+         FileTypesByExtension[File.extname(basename)[1..-1]]
+      end
+
+      def by_name
+         FileTypesByName[basename]
       end
    end
 end

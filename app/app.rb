@@ -31,6 +31,7 @@ module GitBrowser
       get %r{/(.+)/blob/([^/]+)/(.+)$} do |*args|
          @repobrowser = RepositoryBrowser.new(*args)
          @blob = @repobrowser.blob
+         redirect @repobrowser.url('raw') if @blob.binary?
          mustache :blob
       end
 

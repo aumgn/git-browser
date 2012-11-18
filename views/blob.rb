@@ -18,8 +18,8 @@ module GitBrowser::App::Views
          @blob.data
       end
 
-      def file_type
-         @file_type ||= get_file_type
+      def filetype
+         @blob.filetype
       end
 
       def image?
@@ -27,7 +27,7 @@ module GitBrowser::App::Views
       end
 
       def markdown?
-         file_type == 'markdown'
+         @blob.filetype == 'markdown'
       end
 
       def sourcecode?
@@ -40,14 +40,6 @@ module GitBrowser::App::Views
 
       def blame_link
          @repobrowser.url 'blame'
-      end
-
-   private
-
-      def get_file_type
-         language = @blob.language
-         return nil if language.nil?
-         return language.name.downcase
       end
    end
 end
