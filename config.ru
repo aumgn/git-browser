@@ -1,6 +1,5 @@
 #! /usr/bin/env rackup
 
-require './boot/env'
-require './boot/app'
+require './app/app'
 
 run GitBrowser::App

@@ -1,8 +1,6 @@
+require './app/env'
 require 'sinatra/base'
 require 'mustache/sinatra'
-
-require './lib/repository_browser'
-require './lib/file_types'
 
 module GitBrowser
 
@@ -11,44 +9,12 @@ module GitBrowser
       set :root, GitBrowser::Root
 
       register Mustache::Sinatra
-      require './views/layout'
       set :mustache, {
          :views => './views/',
          :templates => 'templates/'
       }
-
-      COMMITS_PER_PAGE = 15
-
-      helpers do
-
-         def tree(*args)
-            @repobrowser = RepositoryBrowser.new(*args)
-            @repobrowser.tree
-         rescue RepositoryBrowser::Error
-            raise Sinatra::NotFound
-         end
-
-         def blob(*args)
-            @repobrowser = RepositoryBrowser.new(*args)
-            @repobrowser.blob
-         rescue RepositoryBrowser::Error
-            raise Sinatra::NotFound
-         end
-
-         def commits(*args)
-            @repobrowser = RepositoryBrowser.new(*args)
-            @repobrowser.commits(params[:page] || 0)
-         rescue RepositoryBrowser::Error
-            raise Sinatra::NotFound
-         end
-
-         def stats(repo_name)
-            @repobrowser = RepositoryBrowser.new(repo_name)
-            nil
-         rescue RepositoryBrowser::Error
-            raise Sinatra::NotFound
-         end
-      end
+      require './views/layout'
+      Dir['./views/layout/*.rb'].each { |view| require view }
 
       get '/' do
          @repositories = Repositories.map.to_a
@@ -57,17 +23,20 @@ module GitBrowser
 
       optional_branch_and_path = '(?:/([^/]+)(?:/(.+?))?)?/?$'
       get %r{/(.+)/tree#{optional_branch_and_path}} do |*args|
-         @tree = tree *args
+         @repobrowser = RepositoryBrowser.new(*args)
+         @tree = @repobrowser.tree
          mustache :tree
       end
 
       get %r{/(.+)/blob/([^/]+)/(.+)$} do |*args|
-         @blob = blob *args
+         @repobrowser = RepositoryBrowser.new(*args)
+         @blob = @repobrowser.blob
          mustache :blob
       end
 
       get %r{/(.+)/raw/([^/]+)/(.+)$} do |*args|
-         @blob = blob *args
+         @repobrowser = RepositoryBrowser.new(*args)
+         @blob = @repobrowser.blob
 
          if @blob.binary?
             headers 'Content-Disposition' =>
@@ -81,13 +50,15 @@ module GitBrowser
       end
 
       get %r{/(.+)/blame/([^/]+)/(.+)$} do |*args|
-         @blob = blob *args
+         @repobrowser = RepositoryBrowser.new(*args)
+         @blob = @repobrowser.blob
          @blame = @repobrowser.blame
          mustache :blame
       end
 
       get %r{/(.+)/commits#{optional_branch_and_path}} do |*args|
-         @commits = commits *args
+         @repobrowser = RepositoryBrowser.new(*args)
+         @commits = @repobrowser.commits(params[:page] || 0)
          mustache :commits
       end
 
@@ -99,7 +70,7 @@ module GitBrowser
       end
 
       get %r{/(.+)/stats/?$} do |repo_name|
-         stats repo_name
+         @repobrowser = RepositoryBrowser.new(repo_name)
          mustache :stats
       end
 
@@ -118,6 +89,22 @@ module GitBrowser
                'Content-Disposition' => "attachment; filename=\"#{filename}\"",
                'Content-Transfer-Encoding' => 'binary'
          repobrowser.archive format
+      end
+
+      error Sinatra::NotFound do
+         @message = "Not found !"
+         mustache :error
+      end
+
+      error RepositoryBrowser::Error do
+         @message = env['sinatra.error'].message
+         status 404
+         mustache :error
+      end
+
+      error do
+         @message = "An internal error occured :sad:"
+         mustache :error
       end
    end
 end

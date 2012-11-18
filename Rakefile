@@ -1,5 +1,5 @@
 require 'fileutils'
-require './boot/env'
+require './app/env'
 
 include GitBrowser
 

@@ -4,13 +4,6 @@ module GitBrowser
 
       COMMITS_PER_PAGE = 15
 
-      class Error              < RuntimeError ; end
-      class RepositoryNotFound < Error        ; end
-      class ReferenceNotFound  < Error        ; end
-      class TreeBlobNotFound   < Error        ; end
-      class NotATree           < Error        ; end
-      class NotABlob           < Error        ; end
-
       def initialize(repo_name, reference = nil, path = nil)
          raise RepositoryNotFound unless Repositories.exists? repo_name
          @repo = Repositories.get repo_name
@@ -130,6 +123,39 @@ module GitBrowser
             @repo.archive_tar reference
          else
             @repo.archive_tar_gz reference
+         end
+      end
+
+      class Error < RuntimeError
+      end
+
+      class RepositoryNotFound < Error
+         def message
+            'Repository not found'
+         end
+      end
+
+      class ReferenceNotFound < Error
+         def message
+            'Reference not found'
+         end
+      end
+
+      class TreeBlobNotFound < Error
+         def message
+            'Neither a tree nor a blob'
+         end
+      end
+
+      class NotATree < Error
+         def message
+            'Not a tree'
+         end
+      end
+
+      class NotABlob < Error
+         def message
+            'Not a blob'
          end
       end
    end

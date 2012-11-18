@@ -1,7 +1,5 @@
 .rbx
 log/
 .bundle/
-
-boot/config.yml
-
+app/conf/config.yml
 public/css/style.css
