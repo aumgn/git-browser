@@ -87,7 +87,11 @@ module GitBrowser::App::Views
       end
    end
 
-   class Commit < Layout
+   class Commit < ProjectPageLayout
+
+      def commits_page?
+         true
+      end
 
       def browse_link
          '/'

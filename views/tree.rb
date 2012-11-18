@@ -1,6 +1,6 @@
 module GitBrowser::App::Views
 
-   class Tree < Layout
+   class Tree < ProjectPageLayout
 
       class Entry
 
@@ -34,6 +34,10 @@ module GitBrowser::App::Views
             return nil if directory?
             "#{@tree_blob.size / 1000} kb"
          end
+      end
+
+      def files_page?
+         true
       end
 
       def parent?

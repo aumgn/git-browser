@@ -41,6 +41,13 @@ module GitBrowser
          rescue RepositoryBrowser::Error
             raise Sinatra::NotFound
          end
+
+         def stats(repo_name)
+            @repobrowser = RepositoryBrowser.new(repo_name)
+            nil
+         rescue RepositoryBrowser::Error
+            raise Sinatra::NotFound
+         end
       end
 
       get '/' do
@@ -92,6 +99,11 @@ module GitBrowser
          raise Sinatra::NotFound if @commit.nil?
 
          mustache :commit
+      end
+
+      get %r{/(.+)/stats/?$} do |repo_name|
+         stats repo_name
+         mustache :stats
       end
    end
 end

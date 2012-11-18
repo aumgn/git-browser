@@ -1,6 +1,10 @@
 module GitBrowser::App::Views
 
-   class Blob < Layout
+   class Blob < ProjectPageLayout
+
+      def files_page?
+         true
+      end
 
       def sourcecode?
          true

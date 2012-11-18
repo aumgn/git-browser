@@ -1,0 +1,11 @@
+<ul class="nav nav-tabs">
+   <li{{# files_page? }} class="active"{{/ files_page? }}>
+      <a href="{{ files_link }}">Files</a>
+   </li>
+   <li{{# commits_page? }} class="active"{{/ commits_page? }}>
+      <a href="{{ commits_link }}">Commits</a>
+   </li>
+   <li{{# stats_page? }} class="active"{{/ stats_page? }}>
+      <a href="{{ stats_link }}">Stats</a>
+   </li>
+</ul>

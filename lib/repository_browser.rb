@@ -44,12 +44,32 @@ module GitBrowser
          url[-1] == ?/ ? url[0...-1] : url
       end
 
+      def url_without_reference(type)
+         "/#{@repo.name}/#{type}"
+      end
+
+      def url_for_reference(type, new_reference)
+         "/#{@repo.name}/#{type}/#{new_reference || 'master'}"
+      end
+
+      def url_without_path(type)
+         url_for_reference type, reference
+      end
+
       def child_url(type, name)
          "#{url type}/#{name}"
       end
 
       def parent_url
          child_url('tree', '..')
+      end
+
+      def branches
+         @repo.heads
+      end
+
+      def tags
+         @repo.tags
       end
 
       def tree_blob

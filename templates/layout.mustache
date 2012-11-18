@@ -14,6 +14,14 @@
    {{> navigation }}
 
    <div class="container">
+      {{# project_page? }}
+      <div class="row">
+         <div class="span12">
+            {{> branch_menu }}
+            {{> project_menu }}
+         </div>
+        </div>
+      {{/ project_page? }}
       {{{ yield }}}
    </div>
 

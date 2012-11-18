@@ -32,7 +32,11 @@ module GitBrowser::App::Views
       end
    end
 
-   class Commits < Layout
+   class Commits < ProjectPageLayout
+
+      def commits_page?
+         true
+      end
 
       def commits_by_dates
          @by_date ||= @commits.group_by do |c|

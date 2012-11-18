@@ -1,0 +1,20 @@
+{{# branches? }}
+<div class="btn-group pull-left space-right">
+    <button class="btn dropdown-toggle" data-toggle="dropdown">
+        browsing: <strong>{{ current_branch }}</strong>
+         <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li class="dropdown-header">Branches</li>
+      {{# branches }}
+         <li><a href="{{ url }}">{{ name }}</a></li>
+      {{/ branches }}
+      {{# tags? }}
+         <li class="dropdown-header">Tags</li>
+         {{# tags }}
+            <li><a href="{{ url }}">{{ name }}</a></li>
+         {{/ tags }}
+      {{/ tags? }}
+    </ul>
+</div>
+{{/ branches? }}

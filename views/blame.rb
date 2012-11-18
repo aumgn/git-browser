@@ -20,7 +20,11 @@ module GitBrowser::App::Views
       end
    end
 
-   class Blame < Layout
+   class Blame < ProjectPageLayout
+
+      def commits_page?
+         true
+      end
 
       def name
          @blob.basename
