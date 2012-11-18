@@ -58,8 +58,8 @@ module GitBrowser
 
       get %r{/(.+)/commits#{optional_branch_and_path}} do |*args|
          @repobrowser = RepositoryBrowser.new(*args)
-         @commits = @repobrowser.commits(params[:page] || 0)
-         mustache :commits
+         @commitspager = @repobrowser.commits_pager(params[:page].to_i || 0)
+         mustache :commits, layout: !request.xhr?
       end
 
       get %r{/(.+)/commit/([a-f0-9^]+)/?$} do |repo_name, commit_id|

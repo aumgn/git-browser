@@ -1,8 +1,10 @@
+require_relative 'commits_pager'
+
 module GitBrowser
 
    class RepositoryBrowser
 
-      COMMITS_PER_PAGE = 15
+      attr :repo
 
       def initialize(repo_name, reference = nil, path = nil)
          raise RepositoryNotFound unless Repositories.exists? repo_name
@@ -110,8 +112,8 @@ module GitBrowser
          Grit::Blob.blame(@repo, reference, path)
       end
 
-      def commits(page = 0)
-         @repo.commits(reference, COMMITS_PER_PAGE, page * COMMITS_PER_PAGE)
+      def commits_pager(page = 0)
+         CommitsPager.new(self, page)
       end
 
       def commit(id)

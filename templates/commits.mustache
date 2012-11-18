@@ -27,3 +27,18 @@
     </tbody>
 </table>
 {{/ commits_by_dates }}
+
+{{# pager }}
+<ul class="pager">
+    {{# previous_page? }}
+    <li class="previous">
+        <a href="{{ previous_page_url }}">&larr; Newer</a>
+    </li>
+    {{/ previous_page? }}
+    {{# next_page? }}
+    <li class="next">
+        <a href="{{ next_page_url }}">Older &rarr;</a>
+    </li>
+    {{/ next_page? }}
+</ul>
+{{/ pager }}

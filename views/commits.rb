@@ -41,11 +41,15 @@ module GitBrowser::App::Views
       end
 
       def commits_by_dates
-         @by_date ||= @commits.group_by do |c|
+         @by_date ||= @commitspager.commits.group_by do |c|
             c.date.strftime('%m/%d/%Y')
          end.map do |date, commit|
             CommitsByDate.new(@repobrowser, date, commit)
          end
+      end
+
+      def pager
+         @commitspager
       end
    end
 end
