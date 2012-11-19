@@ -86,6 +86,4 @@ module GitBrowser::Backend
          end
       end
    end
-
-   Repository = Grit::Repository
 end

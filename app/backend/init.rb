@@ -36,4 +36,4 @@ module GitBrowser::Backend
    end
 end
 
-require_relative 'grit/repository'
+require_relative "#{GitBrowser::Config['backend']}/backend"
