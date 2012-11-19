@@ -36,8 +36,3 @@ module GitBrowser
       end
    end
 end
-
-class Grit::Blob
-
-   include GitBrowser::FileTypes
-end

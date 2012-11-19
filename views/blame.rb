@@ -2,9 +2,8 @@ module GitBrowser::App::Views
 
    class BlameLines
 
-      def initialize(blame_lines)
-         @commit = blame_lines[0]
-         @lines = blame_lines[1]
+      def initialize(blamelines)
+         @blamelines = blamelines
       end
 
       def commit_link
@@ -12,11 +11,12 @@ module GitBrowser::App::Views
       end
 
       def commit_short_hash
-         @commit.id_abbrev
+         @blamelines.commit.short_hash
       end
 
       def lines
-         @lines * "\n"
+         p @blamelines.lines
+         @blamelines.lines * "\n"
       end
    end
 
@@ -33,7 +33,7 @@ module GitBrowser::App::Views
       end
 
       def blames
-         @blame.map { |b| BlameLines.new(b) }
+         @blame.lines.map { |blamelines| BlameLines.new(blamelines) }
       end
    end
 end

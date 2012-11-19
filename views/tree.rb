@@ -10,7 +10,7 @@ module GitBrowser::App::Views
          end
 
          def directory?
-            @tree_blob.is_a? Grit::Tree
+            @tree_blob.tree?
          end
 
          def icon

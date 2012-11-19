@@ -1,28 +1,4 @@
-require 'grit'
-
 module GitBrowser
-
-   class Repository < Grit::Repo
-
-      attr :name
-
-      def initialize(path, name)
-         super(path)
-         @name = name
-      end
-
-      def display_name
-         @name.gsub(/\.git$/, '')
-      end
-
-      def description
-         if File.exists?(File.join(path, 'description'))
-            super
-         else
-            'No description file.'
-         end
-      end
-   end
 
    class RepositoriesList
 
@@ -37,17 +13,15 @@ module GitBrowser
 
       def include?(name)
          return false if excluded?(name)
-         Repository.new path(name), name
+         Backend::Repository.new name, path(name)
          true
-      rescue Grit::InvalidGitRepositoryError
-         false
-      rescue Grit::NoSuchPathError
+      rescue Backend::NoSuchRepository
          false
       end
       alias exists? include?
 
       def get(name)
-         Repository.new path(name), name
+         Backend::Repository.new name, path(name)
       end
 
       include Enumerable
@@ -63,8 +37,8 @@ module GitBrowser
             name = path.gsub(/^#{@root}\/?/, '')
             next if excluded? name
             begin
-               repo = Repository.new(path, name)
-            rescue Grit::InvalidGitRepositoryError
+               repo = Backend::Repository.new(name, path)
+            rescue Backend::NoSuchRepository
                each_recurse(path, &block)
                next
             end

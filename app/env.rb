@@ -42,10 +42,11 @@ module GitBrowser
    require 'yaml'
    Config = YAML.load_file path('app', 'conf', 'config.yml')
 
-   require './app/lib/repositories_list'
+   require_relative 'lib/file_types'
+   require_relative 'backend/backend'
+   require_relative 'lib/repositories_list'
    Repositories = RepositoriesList.new(Config['repositories'],
       Config['hidden'])
 
-   require './app/lib/repository_browser'
-   require './app/lib/file_types'
+   require_relative 'lib/repository_browser'
 end

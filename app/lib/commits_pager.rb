@@ -40,7 +40,7 @@ module GitBrowser
       end
 
       def total_pages
-         @total_pages ||= @repobrowser.repo.commit_count / @commits_per_page
+         @total_pages ||= @repobrowser.repo.total_commits / @commits_per_page
       end
    end
 end

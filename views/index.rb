@@ -7,7 +7,7 @@ module GitBrowser::App::Views
             name: repo.display_name,
             index_link: "/#{repo.name}/tree",
             rss_link: '/',
-            description: repo.description,
+            description: repo.display_description,
          } }
       end
    end

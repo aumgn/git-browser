@@ -34,26 +34,26 @@ module GitBrowser::App::Views
       end
 
       def name
-         @diff.b_path
+         @diff.new_path
       end
 
       def lines
          counter = Struct.new(:old_line, :new_line).new(1, 1)
-         @diff.diff.each_line.to_a[3..-1].map do |line|
+         @diff.content.each_line.to_a[3..-1].map do |line|
             DiffLine.new(counter, line)
          end
       end
 
       def short_hash
-         @commit.id_abbrev
+         @commit.short_hash
       end
 
       def history_link
-         @repobrowser.url_for_path('commits', @diff.b_path)
+         @repobrowser.url_for_path('commits', @diff.new_path)
       end
 
       def view_link
-         @repobrowser.url_for_path('blob', @diff.b_path)
+         @repobrowser.url_for_path('blob', @diff.new_path)
       end
    end
 
@@ -104,7 +104,7 @@ module GitBrowser::App::Views
    class Commit < ProjectPageLayout
 
       def breadcrumps
-         [{ directory: "Commit #{@commit.id_abbrev}", path: ''}]
+         [{ directory: "Commit #{@commit.short_hash}", path: ''}]
       end
 
       def commits_page?
@@ -112,7 +112,7 @@ module GitBrowser::App::Views
       end
 
       def browse_link
-         @repobrowser.url_for_reference 'tree', @commit.id_abbrev
+         @repobrowser.url_for_reference 'tree', @commit.short_hash
       end
 
       def message
@@ -140,8 +140,8 @@ module GitBrowser::App::Views
          @commit.date.strftime('%d/%m/%Y at %H:%M:%S')
       end
 
-      def diffs_stat
-         @commit.stats.to_diffstat.each_with_index.map do |diff, index|
+      def stats
+         @commit.stats.each_with_index.map do |diff, index|
             DiffStat.new(index, diff)
          end
       end

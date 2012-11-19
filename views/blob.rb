@@ -41,5 +41,9 @@ module GitBrowser::App::Views
       def blame_link
          @repobrowser.url 'blame'
       end
+
+      def commits_link
+         @repobrowser.url 'commits'
+      end
    end
 end

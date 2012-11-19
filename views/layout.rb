@@ -13,9 +13,9 @@ class GitBrowser::App
 
          def self.breadcrumbs(directory, path = '')
             class_eval <<-END
-               def breadcrumbs
-                  [{ directory: '#{directory}', path: '#{path}' }]
-               end
+            def breadcrumbs
+               [{ directory: '#{directory}', path: '#{path}' }]
+            end
             END
          end
 
@@ -28,7 +28,7 @@ class GitBrowser::App
          end
 
          def repository_name
-            @repobrowser.repository_name
+            @repobrowser.repo.display_name
          end
 
          def repository_url
@@ -45,12 +45,23 @@ class GitBrowser::App
             []
          end
 
+         def archive_formats
+            formats = GitBrowser::Backend::Repository.archive_formats
+            formats.map do |name, format|
+               {
+                  current_branch: @repobrowser.reference,
+                  name: format.extension.upcase,
+                  link: @repobrowser.url_without_path("#{name}ball"),
+               }
+            end
+         end
+
          def current_branch
             @repobrowser.reference
          end
 
          def branches
-            wrap_references @repobrowser.branches
+            wrap_references @repobrowser.repo.heads
          end
 
          def tags?
@@ -58,7 +69,7 @@ class GitBrowser::App
          end
 
          def tags
-            @tags ||= wrap_references @repobrowser.tags
+            @tags ||= wrap_references @repobrowser.repo.tags
          end
 
          def files_page?
@@ -85,24 +96,18 @@ class GitBrowser::App
             @repobrowser.url_without_reference 'stats'
          end
 
-         def tar_link
-            @repobrowser.url_without_path 'tarball'
-         end
-
-         def targz_link
-            @repobrowser.url_without_path 'targzball'
-         end
-
-      private
+         private
 
          def wrap_references(references)
+            return [] if references.nil?
             references.map do |ref|
                {
-                  name: ref.name,
-                  url: @repobrowser.url_for_reference('tree', ref.name)
+                  name: ref,
+                  url: @repobrowser.url_for_reference('tree', ref)
                }
             end
          end
       end
    end
 end
+

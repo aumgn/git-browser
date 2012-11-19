@@ -9,19 +9,13 @@ module GitBrowser
       def initialize(repo_name, reference = nil, path = nil)
          raise RepositoryNotFound unless Repositories.exists? repo_name
          @repo = Repositories.get repo_name
-         self.reference = reference || 'master'
+         self.reference = reference
          self.path = path unless path.nil?
-      end
-
-      def repository_name
-         @repo.display_name
       end
 
       def reference=(reference)
          reference ||= 'master'
-         if !@repo.is_head?(reference) and @repo.commit(reference).nil?
-            raise ReferenceNotFound
-         end
+         raise ReferenceNotFound unless @repo.valid_reference?(reference)
          @reference = reference
       end
 
@@ -31,6 +25,18 @@ module GitBrowser
 
       def path=(path)
          @path = path
+      end
+
+      def path_breadcrumbs
+         breadcrumbs = []
+         unless path.nil?
+            url = url_without_path 'tree'
+            @path.split('/').map do |fragment|
+               url = url + '/' + fragment
+               breadcrumbs << { directory: fragment, url: url }
+            end
+         end
+         breadcrumbs
       end
 
       def parent?
@@ -59,7 +65,7 @@ module GitBrowser
       end
 
       def commit_url(commit)
-         url_without_reference('commit') << '/' << commit.id_abbrev
+         url_without_reference('commit') << '/' << commit.short_hash
       end
 
       def child_url(type, name)
@@ -70,56 +76,23 @@ module GitBrowser
          child_url('tree', '..')
       end
 
-      def branches
-         @repo.heads
-      end
-
-      def tags
-         @repo.tags
-      end
-
-      def path_breadcrumbs
-         breadcrumbs = []
-         unless path.nil?
-            url = url_without_path 'tree'
-            @path.split('/').map do |fragment|
-               url = url + '/' + fragment
-               breadcrumbs << { directory: fragment, url: url }
-            end
-         end
-         breadcrumbs
-      end
-
-      def tree_blob
-         tree_blob = @repo.tree(reference)
-         unless @path.nil?
-            tree_blob = tree_blob / @path
-            raise TreeBlobNotFound if tree_blob.nil?
-         end
-         tree_blob
-      end
-
       def tree
-         tree = tree_blob
-         raise NotATree unless tree.is_a? Grit::Tree
+         tree = @repo.tree_or_blob(reference, path)
+         raise NotATree unless tree.tree?
          tree
       end
 
       def blob
-         blob = tree_blob
-         raise NotABlob unless blob.is_a? Grit::Blob
+         blob = @repo.tree_or_blob(reference, path)
+         raise NotABlob unless blob.blob?
          blob
       end
 
-      def blame
-         Grit::Blob.blame(@repo, reference, path)
-      end
-
       def commits(number, skip)
-         @repo.log(reference, path || '.', n: number, skip: skip)
+         @repo.commits(reference, path, number, skip)
       end
 
-      def commits_pager(page = 0)
+      def commits_pager(page)
          CommitsPager.new(self, page)
       end
 
@@ -127,12 +100,12 @@ module GitBrowser
          @repo.commit(reference)
       end
 
+      def blame
+         @repo.blame(reference, path)
+      end
+
       def archive(format)
-         if format == 'tar'
-            @repo.archive_tar reference
-         else
-            @repo.archive_tar_gz reference
-         end
+         @repo.archive(format, reference)
       end
 
       class Error < RuntimeError
@@ -169,5 +142,3 @@ module GitBrowser
       end
    end
 end
-
-

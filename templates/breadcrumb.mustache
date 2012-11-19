@@ -12,14 +12,12 @@
 
    <div class="pull-right">
       <div class="btn-group download-buttons">
-         <a href="{{ tar_link }}" class="btn btn-mini"
+         {{# archive_formats }}
+         <a href="{{ link }}" class="btn btn-mini"
                title="Download '{{ current_branch }}' as a TAR archive">
-            TAR
+            {{ name }}
          </a>
-         <a href="{{ targz_link }}" class="btn btn-mini"
-               title="Download '{{ current_branch }}' as a TAR.GZ archive">
-            TAR.GZ
-         </a>
+         {{/ archive_formats }}
       </div>
       {{!<a href="" class="rss-icon">
          <i class="rss"></i>

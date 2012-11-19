@@ -9,7 +9,7 @@ module GitBrowser::App::Views
 
       def initialize(repobrowser, commit)
          @link = repobrowser.commit_url commit
-         @short_hash = commit.id_abbrev
+         @short_hash = commit.short_hash
          @date = commit.date.strftime('%d/%m/%Y at %H:%M:%S')
          @message = commit.message.split("\n")[0]
 

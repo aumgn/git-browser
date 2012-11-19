@@ -74,21 +74,23 @@ module GitBrowser
          mustache :stats
       end
 
-      get %r{/(.+)/(tar(?:gz)?)ball(?:/([^/]+))?/?} do |repo_name, format, reference = nil|
+      formats = Backend::Repository.archive_formats.keys * '|'
+      archive = %r{/(.+)/(#{formats})ball(?:/([^/]+))?/?}
+      get archive do |repo_name, format_name, reference = nil|
          begin
             repobrowser = RepositoryBrowser.new(repo_name, reference)
          rescue RepositoryBrowser::Error
             raise Sinatra::NotFound
          end
-         ctype = format == 'tar' ? 'application/x-tar' : 'application/x-tgz'
-         filename = File.basename(repobrowser.repository_name)
+         format = Backend::Repository.archive_formats[format_name]
+         filename = File.basename(repobrowser.repo.name)
          filename << '-' << repobrowser.reference
-         filename << '.' << (format == 'tar' ? 'tar' : 'tar.gz')
-         headers 'Content-type' => ctype,
+         filename << '.' << format.extension
+         headers 'Content-type' => format.mime_type,
                'Content-Description' => 'File Transfer',
                'Content-Disposition' => "attachment; filename=\"#{filename}\"",
                'Content-Transfer-Encoding' => 'binary'
-         repobrowser.archive format
+         repobrowser.archive format_name
       end
 
       error Sinatra::NotFound do
