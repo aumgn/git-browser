@@ -31,7 +31,7 @@ module GitBrowser::App::Views
       end
 
       def sourcecode?
-         !image? && !markdown?
+         !image? && !markdown? && @blob.filetype != 'binary'
       end
 
       def raw_link

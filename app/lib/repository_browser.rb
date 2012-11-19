@@ -31,7 +31,7 @@ module GitBrowser
          breadcrumbs = []
          unless path.nil?
             url = url_without_path 'tree'
-            @path.split('/').map do |fragment|
+            path.split('/').map do |fragment|
                url = url + '/' + fragment
                breadcrumbs << { directory: fragment, url: url }
             end
@@ -40,7 +40,7 @@ module GitBrowser
       end
 
       def parent?
-         !@path.nil?
+         !path.nil?
       end
 
       def url(type)

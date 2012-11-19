@@ -1,4 +1,4 @@
-require './app/env'
+require_relative 'env'
 require 'sinatra/base'
 require 'mustache/sinatra'
 
@@ -14,7 +14,7 @@ module GitBrowser
          :templates => 'templates/'
       }
       require './views/layout'
-      Dir['./views/layout/*.rb'].each { |view| require view }
+      Dir['./views/*.rb'].each { |view| require view }
 
       get '/' do
          @repositories = Repositories.map.to_a
@@ -84,8 +84,7 @@ module GitBrowser
          end
          format = Backend::Repository.archive_formats[format_name]
          filename = File.basename(repobrowser.repo.name)
-         filename << '-' << repobrowser.reference
-         filename << '.' << format.extension
+         filename << '-' << repobrowser.reference << '.' << format.extension
          headers 'Content-type' => format.mime_type,
                'Content-Description' => 'File Transfer',
                'Content-Disposition' => "attachment; filename=\"#{filename}\"",
@@ -94,19 +93,22 @@ module GitBrowser
       end
 
       error Sinatra::NotFound do
-         @message = "Not found !"
-         mustache :error
+         mustache :error, locals: {
+            message: "Not found !"
+         }
       end
 
       error RepositoryBrowser::Error do
-         @message = env['sinatra.error'].message
          status 404
-         mustache :error
+         mustache :error, locals: {
+            message: env['sinatra.error'].message
+         }
       end
 
       error do
-         @message = "An internal error occured :sad:"
-         mustache :error
+         mustache :error, locals: {
+            message: "An internal error occured :sad:"
+         }
       end
    end
 end

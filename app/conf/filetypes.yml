@@ -6,6 +6,39 @@ by_filename:
 
 by_extension:
     php:        php
+    exe:        binary
+    com:        binary
+    so:         binary
+    la:         binary
+    o:          binary
+    dll:        binary
+    pyc:        binary
+    jpg:        binary
+    jpeg:       binary
+    bmp:        binary
+    gif:        binary
+    png:        binary
+    xmp:        binary
+    pcx:        binary
+    svgz:       binary
+    ttf:        binary
+    tiff:       binary
+    oet:        binary
+    gz:         binary
+    tar:        binary
+    rar:        binary
+    zip:        binary
+    7z:         binary
+    jar:        binary
+    class:      binary
+    odt:        binary
+    ods:        binary
+    pdf:        binary
+    doc:        binary
+    docx:       binary
+    dot:        binary
+    xls:        binary
+    xlsx:       binary
     c:          clike
     h:          clike
     cpp:        clike

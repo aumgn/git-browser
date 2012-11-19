@@ -1,5 +1,7 @@
 repositories: "path/to/repositories"
 hidden: []
 
+commits_per_page: 15
+
 # grit or rugged
 backend: grit

@@ -35,6 +35,7 @@ class GitBrowser::App
             @repobrowser.url_without_reference 'tree'
          end
 
+         # FIXME: Hack
          def breadcrumbs_it
             b = breadcrumbs.each { |b| { last?: false }.merge(b) }
             b[-1][:last?] = true unless b.empty?

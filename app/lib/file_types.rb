@@ -24,7 +24,7 @@ module GitBrowser
    private
 
       def guess_filetype
-         by_extension || by_name || 'binary'
+         by_extension || by_name || 'unknown'
       end
 
       def by_extension

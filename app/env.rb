@@ -30,9 +30,7 @@ module GitBrowser
 
    def env(name)
       bool = name == Env
-      if bool and block_given?
-         yield
-      end
+      yield if bool and block_given?
       bool
    end
 
@@ -41,7 +39,7 @@ module GitBrowser
 
    require 'bundler'
    backend = Config['backend'].to_sym
-   Bundler.setup(groups = :default, Env, backend)
+   Bundler.setup(:default, Env, backend)
 
    require_relative 'lib/file_types'
    require_relative 'backend/init'

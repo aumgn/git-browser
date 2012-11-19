@@ -24,6 +24,7 @@ module GitBrowser
          Backend::Repository.new name, path(name)
       end
 
+      # Note does not support Enumerator API
       include Enumerable
       def each(&block)
          each_recurse @root, &block

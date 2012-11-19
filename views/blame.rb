@@ -2,12 +2,13 @@ module GitBrowser::App::Views
 
    class BlameLines
 
-      def initialize(blamelines)
+      def initialize(repobrowser, blamelines)
+         @repobrowser = repobrowser
          @blamelines = blamelines
       end
 
       def commit_link
-         '/'
+         @repobrowser.commit_url @blamelines.commit
       end
 
       def commit_short_hash
@@ -15,7 +16,6 @@ module GitBrowser::App::Views
       end
 
       def lines
-         p @blamelines.lines
          @blamelines.lines * "\n"
       end
    end
@@ -33,7 +33,9 @@ module GitBrowser::App::Views
       end
 
       def blames
-         @blame.lines.map { |blamelines| BlameLines.new(blamelines) }
+         @blame.lines.map do |blamelines|
+            BlameLines.new(@repobrowser, blamelines)
+         end
       end
    end
 end

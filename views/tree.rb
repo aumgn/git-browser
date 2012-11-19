@@ -32,7 +32,7 @@ module GitBrowser::App::Views
 
          def size
             return nil if directory?
-            "#{@tree_blob.size / 1000} kb"
+            (@tree_blob.size.to_f / 1000).round.to_s + ' kb'
          end
       end
 

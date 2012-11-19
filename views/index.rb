@@ -6,7 +6,6 @@ module GitBrowser::App::Views
          @repositories.map { |repo| {
             name: repo.display_name,
             index_link: "/#{repo.name}/tree",
-            rss_link: '/',
             description: repo.display_description,
          } }
       end
