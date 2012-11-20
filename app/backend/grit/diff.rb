@@ -2,8 +2,14 @@ module GitBrowser::Backend::Grit
 
    class Stat
 
+      include GitBrowser::FileTypes
+
       def initialize(stat)
          @stat = stat
+      end
+
+      def basename
+         File.basename filename
       end
 
       def filename
@@ -25,8 +31,14 @@ module GitBrowser::Backend::Grit
 
    class Diff
 
+      include GitBrowser::FileTypes
+
       def initialize(diff)
          @diff = diff
+      end
+
+      def basename
+         File.basename new_path
       end
 
       def new_path

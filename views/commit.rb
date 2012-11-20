@@ -15,7 +15,12 @@ module GitBrowser::App::Views
          @stat.filename
       end
 
+      def binary?
+         @stat.binary? or @stat.image?
+      end
+
       def summary
+         return 'Binary' if binary?
          "+#{@stat.additions} -#{@stat.deletions} ~#{@stat.net}"
       end
    end
@@ -35,6 +40,10 @@ module GitBrowser::App::Views
 
       def name
          @diff.new_path
+      end
+
+      def binary?
+         @diff.binary? or @diff.image?
       end
 
       def lines

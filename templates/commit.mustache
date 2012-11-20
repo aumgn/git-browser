@@ -45,6 +45,11 @@
         </div>
     </div>
 
+    {{# binary? }}
+    <div class="binary-diff"><p>Binary</p></div>
+    {{/ binary? }}
+
+    {{^ binary? }}
     <div class="source-diff">
     <table>
     {{# lines }}
@@ -62,6 +67,7 @@
     {{/ lines }}
     </table>
     </div>
+    {{/ binary? }}
 </div>
 {{/ diffs }}
 
