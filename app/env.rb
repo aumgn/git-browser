@@ -5,7 +5,7 @@ module GitBrowser
 
    extend self
 
-   Env = (::ENV["RACK_ENV"] || "development").to_sym
+   Env = (::ENV["RACK_ENV"] || :development).to_sym
    Root = File.expand_path('../..', __FILE__)
 
    def path(*args)
@@ -34,18 +34,16 @@ module GitBrowser
       bool
    end
 
-   require 'yaml'
-   Config = YAML.load_file path('app', 'conf', 'config.yml')
+   require_relative 'lib/config'
+   Config = YamlConfig.new path('app', 'conf', 'config.yml')
 
    require 'bundler'
-   backend = Config['backend'].to_sym
-   Bundler.setup(:default, Env, backend)
+   Bundler.setup(:default, Env, Config.backend)
 
    require_relative 'lib/file_types'
    require_relative 'backend/init'
    require_relative 'lib/repositories_list'
-   Repositories = RepositoriesList.new(Config['repositories'],
-      Config['hidden'])
+   Repositories = RepositoriesList.new(Config.repositories, Config.hidden)
 
    require_relative 'lib/repository_browser'
 end

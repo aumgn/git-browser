@@ -3,7 +3,7 @@ module GitBrowser
    class CommitsPager
 
       def initialize(repobrowser, page)
-         @commits_per_page = GitBrowser::Config['commits_per_page'] || 15
+         @commits_per_page = GitBrowser::Config.commits_per_page
          @repobrowser = repobrowser
          @page = page
       end
