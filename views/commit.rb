@@ -58,11 +58,11 @@ module GitBrowser::App::Views
       end
 
       def history_link
-         @repobrowser.url_for_path('commits', @diff.new_path)
+         @repobrowser.url 'commits', path: @diff.new_path
       end
 
       def view_link
-         @repobrowser.url_for_path('blob', @diff.new_path)
+         @repobrowser.url 'blob', path: @diff.new_path
       end
    end
 
@@ -121,7 +121,7 @@ module GitBrowser::App::Views
       end
 
       def browse_link
-         @repobrowser.url_for_reference 'tree', @commit.short_hash
+         @repobrowser.url 'tree', reference: @commit.short_hash, path: nil
       end
 
       def message

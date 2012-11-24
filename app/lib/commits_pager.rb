@@ -31,7 +31,7 @@ module GitBrowser
    private
 
       def page_url(page)
-         "#{@repobrowser.url_without_path('commits')}?page=#{page}"
+         "#{@repobrowser.url('commits')}?page=#{page}"
       end
 
       def total_pages

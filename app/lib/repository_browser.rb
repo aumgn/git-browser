@@ -30,7 +30,7 @@ module GitBrowser
       def path_breadcrumbs
          breadcrumbs = []
          unless path.nil?
-            url = url_without_path 'tree'
+            url = url 'tree', path: nil
             path.split('/').map do |fragment|
                url = url + '/' + fragment
                breadcrumbs << { directory: fragment, url: url }
@@ -43,37 +43,18 @@ module GitBrowser
          !path.nil?
       end
 
-      def url(type)
-         url_for_path(type, path)
-      end
-
-      def url_without_reference(type)
-         "/#{@repo.name}/#{type}"
-      end
-
-      def url_for_reference(type, new_reference)
-         "/#{@repo.name}/#{type}/#{new_reference || 'master'}"
-      end
-
-      def url_without_path(type)
-         url_for_reference type, reference
-      end
-
-      def url_for_path(type, path)
-         url = "/#{@repo.name}/#{type}/#{reference}/#{path.to_s}"
-         url[-1] == ?/ ? url[0...-1] : url
+      def url(type, options = {})
+         '/' + [
+            options.has_key?(:repo)      ? options[:repo]      : @repo.name,
+            type,
+            options.has_key?(:reference) ? options[:reference] : reference,
+            options.has_key?(:path)      ? options[:path]      : path,
+            options.has_key?(:child)     ? options[:child]     : nil
+         ].compact * '/'
       end
 
       def commit_url(commit)
-         url_without_reference('commit') << '/' << commit.short_hash
-      end
-
-      def child_url(type, name)
-         "#{url type}/#{name}"
-      end
-
-      def parent_url
-         child_url('tree', '..')
+         "/#{@repo.name}/commit/#{commit.short_hash}"
       end
 
       def tree

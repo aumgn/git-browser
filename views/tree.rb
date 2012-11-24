@@ -19,7 +19,7 @@ module GitBrowser::App::Views
 
          def link
             type = directory? ? 'tree' : 'blob'
-            @repobrowser.child_url type, @tree_blob.basename
+            @repobrowser.url type, child: @tree_blob.basename
          end
 
          def name
@@ -49,7 +49,7 @@ module GitBrowser::App::Views
       end
 
       def parent
-         @repobrowser.parent_url
+         @repobrowser.url('tree', child: '..')
       end
 
       def files
