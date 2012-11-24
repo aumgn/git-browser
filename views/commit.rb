@@ -27,6 +27,8 @@ module GitBrowser::App::Views
 
    class Diff
 
+      LineCounter = Struct.new(:old_line, :new_line)
+
       def initialize(repobrowser, commit, index, diff)
          @repobrowser = repobrowser
          @commit = commit
@@ -47,8 +49,10 @@ module GitBrowser::App::Views
       end
 
       def lines
-         counter = Struct.new(:old_line, :new_line).new(1, 1)
-         @diff.content.each_line.to_a[3..-1].map do |line|
+         counter = LineCounter.new(1, 1)
+         i = 0
+         @diff.content.each_line.to_a.map do |line|
+            (i += 1; next) if i < 2
             DiffLine.new(counter, line)
          end
       end
@@ -68,19 +72,29 @@ module GitBrowser::App::Views
 
    class DiffLine
 
+      HUNK_HEADER_PATTERN = /^@@ -(\d+),(\d+) \+(\d+),(\d+) @@/
+
+      attr_reader :content, :type, :old_number, :new_number
+
       def initialize(counter, line)
-         @line = line
+         @content = line
+
+         if line =~ HUNK_HEADER_PATTERN
+            @type = 'chunk'
+            counter.old_line = $1.to_i
+            counter.new_line = $3.to_i
+            @old_number = '...'
+            @new_number = '...'
+            return
+         end
 
          @old_number = counter.old_line
          @new_number = counter.new_line
-
-         @old_number = counter.old_line
-         @new_number = counter.new_line
-         if @line[0] == ?-
+         if line[0] == ?-
             @type = 'old'
             counter.old_line += 1
             @new_number = nil
-         elsif @line[0] == ?+
+         elsif line[0] == ?+
             @type = 'new'
             counter.new_line += 1
             @old_number = nil
@@ -89,24 +103,6 @@ module GitBrowser::App::Views
             counter.old_line += 1
             counter.new_line += 1
          end
-      end
-
-      def old_number
-         @old_number
-      end
-
-      def new_number
-         @new_number
-      end
-
-      def type
-         return 'new' if @line[0] == ?+
-         return 'old' if @line[0] == ?-
-         return nil
-      end
-
-      def content
-         @line
       end
    end
 
