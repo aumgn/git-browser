@@ -110,7 +110,7 @@ module GitBrowser::App::Views
       end
    end
 
-   class Commit < ProjectPageLayout
+   class Commit < ProjectLayout
 
       def breadcrumps
          [{ directory: "Commit #{@commit.short_hash}", path: '' }]
@@ -166,3 +166,4 @@ module GitBrowser::App::Views
       end
    end
 end
+

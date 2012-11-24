@@ -1,6 +1,6 @@
 module GitBrowser::App::Views
 
-   class Stats < ProjectPageLayout
+   class Stats < ProjectLayout
 
       breadcrumbs 'Statistics'
 

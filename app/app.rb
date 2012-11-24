@@ -13,7 +13,9 @@ module GitBrowser
          :views => './views/',
          :templates => 'templates/'
       }
+
       require './views/layout'
+      require './views/project_layout'
       Dir['./views/*.rb'].each { |view| require view }
 
       get '/' do

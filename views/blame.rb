@@ -20,7 +20,7 @@ module GitBrowser::App::Views
       end
    end
 
-   class Blame < ProjectPageLayout
+   class Blame < ProjectLayout
 
       breadcrumbs 'Blame'
 

@@ -32,7 +32,7 @@ module GitBrowser::App::Views
       end
    end
 
-   class Commits < ProjectPageLayout
+   class Commits < ProjectLayout
 
       breadcrumbs 'Commit history'
 

@@ -1,6 +1,6 @@
 module GitBrowser::App::Views
 
-   class Tree < ProjectPageLayout
+   class Tree < ProjectLayout
 
       class Entry
 

@@ -1,6 +1,6 @@
 module GitBrowser::App::Views
 
-   class Blob < ProjectPageLayout
+   class Blob < ProjectLayout
 
       def files_page?
          true
