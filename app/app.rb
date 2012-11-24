@@ -8,6 +8,13 @@ module GitBrowser
       set :environment, GitBrowser::Env
       set :root, GitBrowser::Root
 
+      GitBrowser.development? do
+         require 'sinatra/reloader'
+         register Sinatra::Reloader
+         also_reload "app/**/*"
+         also_reload "views/*"
+      end
+
       register Mustache::Sinatra
       set :mustache, {
          :views => './views/',
