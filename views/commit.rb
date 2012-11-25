@@ -72,7 +72,7 @@ module GitBrowser::App::Views
 
    class DiffLine
 
-      HUNK_HEADER_PATTERN = /^@@ -(\d+),(\d+) \+(\d+),(\d+) @@/
+      HUNK_HEADER_PATTERN = /^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@/
 
       attr_reader :content, :type, :old_number, :new_number
 
@@ -82,7 +82,7 @@ module GitBrowser::App::Views
          if line =~ HUNK_HEADER_PATTERN
             @type = 'chunk'
             counter.old_line = $1.to_i
-            counter.new_line = $3.to_i
+            counter.new_line = $2.to_i
             @old_number = '...'
             @new_number = '...'
             return
