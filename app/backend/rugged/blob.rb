@@ -21,10 +21,6 @@ module GitBrowser::Backend::Rugged
          @name
       end
 
-      def mode
-         ''
-      end
-
       def size
          @blob.size
       end

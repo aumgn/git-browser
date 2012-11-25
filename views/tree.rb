@@ -26,10 +26,6 @@ module GitBrowser::App::Views
             @tree_blob.basename
          end
 
-         def mode
-            @tree_blob.mode
-         end
-
          def size
             return nil if directory?
             (@tree_blob.size.to_f / 1000).round.to_s + ' kb'

@@ -20,10 +20,6 @@ module GitBrowser::Backend::Grit
          @blob.basename
       end
 
-      def mode
-         @blob.mode
-      end
-
       def size
          @blob.size
       end

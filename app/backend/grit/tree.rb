@@ -18,10 +18,6 @@ module GitBrowser::Backend::Grit
          @tree.basename
       end
 
-      def mode
-         @tree.mode
-      end
-
       def size
          0
       end
