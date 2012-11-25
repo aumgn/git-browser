@@ -67,16 +67,16 @@ module GitBrowser::App::Views
          false
       end
 
-      def nav_files_link
-         @repobrowser.url 'tree', path: nil
-      end
-
       def commits_page?
          false
       end
 
+      def nav_files_link
+         nav_link 'tree'
+      end
+
       def nav_commits_link
-         @repobrowser.url 'commits', path: nil
+         nav_link 'commits'
       end
 
       def stats_page?
@@ -88,6 +88,11 @@ module GitBrowser::App::Views
       end
 
    private
+
+      def nav_link(type)
+         ref = @repobrowser.head_reference? ? @repobrowser.reference : nil
+         @repobrowser.url type, reference: ref, path: nil
+      end
 
       def wrap_references(references)
          return [] if references.nil?

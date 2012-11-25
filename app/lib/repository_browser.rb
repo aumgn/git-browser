@@ -19,6 +19,10 @@ module GitBrowser
          @reference = reference
       end
 
+      def head_reference?
+         @repo.head_reference?(reference)
+      end
+
       def path
          @path
       end

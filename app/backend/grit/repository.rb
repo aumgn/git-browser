@@ -41,6 +41,10 @@ module GitBrowser::Backend
             @repo.is_head?(reference) || !@repo.commit(reference).nil?
          end
 
+         def head_reference?(reference)
+            @repo.is_head?(reference)
+         end
+
          def heads
             @repo.heads.map { |head| head.name }
          end
