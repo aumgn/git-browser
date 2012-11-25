@@ -42,7 +42,7 @@ module GitBrowser::App::Views
 
       def commits_by_dates
          @by_date ||= @commitspager.commits.group_by do |c|
-            c.date.strftime('%m/%d/%Y')
+            c.date.strftime('%d/%m/%Y')
          end.map do |date, commit|
             CommitsByDate.new(@repobrowser, date, commit)
          end
