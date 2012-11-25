@@ -25,29 +25,38 @@ module GitBrowser
       require './views/project_layout'
       Dir['./views/*.rb'].each { |view| require view }
 
+      def self.repository_get(path, &block)
+         method = send(:generate_method, "repository_get #{path}", &block)
+         get path do |*args|
+            begin
+               @repobrowser = RepositoryBrowser.new(*args)
+               method.bind(self).call
+            rescue RepositoryBrowser::Error => exc
+               halt 404, exc.message
+            end
+         end
+      end
+
       get '/' do
          @repositories = Repositories.map.to_a
          mustache :index
       end
 
       optional_branch_and_path = '(?:/([^/]+)(?:/(.+?))?)?/?$'
-      get %r{/(.+)/tree#{optional_branch_and_path}} do |*args|
-         @repobrowser = RepositoryBrowser.new(*args)
+      repository_get %r{/(.+)/tree#{optional_branch_and_path}} do
          @tree = @repobrowser.tree_blob
          redirect @repobrowser.url 'blob' if @tree.blob?
          mustache :tree
       end
 
-      get %r{/(.+)/blob/([^/]+)/(.+)$} do |*args|
-         @repobrowser = RepositoryBrowser.new(*args)
+      repository_get %r{/(.+)/blob/([^/]+)/(.+)$} do
          @blob = @repobrowser.tree_blob
          redirect @repobrowser.url 'tree' if @blob.tree?
          redirect @repobrowser.url 'raw' if @blob.binary?
          mustache :blob
       end
 
-      get %r{/(.+)/raw/([^/]+)/(.+)$} do |*args|
-         @repobrowser = RepositoryBrowser.new(*args)
+      repository_get %r{/(.+)/raw/([^/]+)/(.+)$} do
          @blob = @repobrowser.tree_blob
          redirect @repobrowser.url 'tree' if @blob.tree?
          if @blob.binary?
@@ -61,22 +70,19 @@ module GitBrowser
          @blob.data
       end
 
-      get %r{/(.+)/blame/([^/]+)/(.+)$} do |*args|
-         @repobrowser = RepositoryBrowser.new(*args)
+      repository_get %r{/(.+)/blame/([^/]+)/(.+)$} do
          @blob = @repobrowser.tree_blob
          redirect @repobrowser.url 'tree' if @blob.tree?
          @blame = @repobrowser.blame
          mustache :blame
       end
 
-      get %r{/(.+)/commits#{optional_branch_and_path}} do |*args|
-         @repobrowser = RepositoryBrowser.new(*args)
+      repository_get %r{/(.+)/commits#{optional_branch_and_path}} do
          @commitspager = @repobrowser.commits_pager(params[:page].to_i || 0)
          mustache :commits, layout: !request.xhr?
       end
 
-      get %r{/(.+)/commit/([a-f0-9^]+)/?$} do |repo_name, commit_id|
-         @repobrowser = RepositoryBrowser.new repo_name, commit_id
+      repository_get %r{/(.+)/commit/([a-f0-9^]+)/?$} do
          @commit = @repobrowser.commit
          mustache :commit
       end
@@ -86,8 +92,8 @@ module GitBrowser
       get archive do |repo_name, format_name, reference = nil|
          begin
             repobrowser = RepositoryBrowser.new(repo_name, reference)
-         rescue RepositoryBrowser::Error
-            raise Sinatra::NotFound
+         rescue RepositoryBrowser::Error => exc
+            halt 404, exc.message
          end
          format = Backend::Repository.archive_formats[format_name]
          filename = File.basename(repobrowser.repo.name)
@@ -99,14 +105,12 @@ module GitBrowser
          repobrowser.archive format_name
       end
 
-      error Sinatra::NotFound do
-         @message = "Not found !"
-         mustache :error
-      end
-
-      error RepositoryBrowser::Error do
-         status 404
-         @message = env['sinatra.error'].message
+      not_found do
+         if response.body.nil? or response.body.empty?
+            @message = "Not found !"
+         else
+            @message = response.body.first
+         end
          mustache :error
       end
 
