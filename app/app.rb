@@ -33,21 +33,23 @@ module GitBrowser
       optional_branch_and_path = '(?:/([^/]+)(?:/(.+?))?)?/?$'
       get %r{/(.+)/tree#{optional_branch_and_path}} do |*args|
          @repobrowser = RepositoryBrowser.new(*args)
-         @tree = @repobrowser.tree
+         @tree = @repobrowser.tree_blob
+         redirect @repobrowser.url 'blob' if @tree.blob?
          mustache :tree
       end
 
       get %r{/(.+)/blob/([^/]+)/(.+)$} do |*args|
          @repobrowser = RepositoryBrowser.new(*args)
-         @blob = @repobrowser.blob
-         redirect @repobrowser.url('raw') if @blob.binary?
+         @blob = @repobrowser.tree_blob
+         redirect @repobrowser.url 'tree' if @blob.tree?
+         redirect @repobrowser.url 'raw' if @blob.binary?
          mustache :blob
       end
 
       get %r{/(.+)/raw/([^/]+)/(.+)$} do |*args|
          @repobrowser = RepositoryBrowser.new(*args)
-         @blob = @repobrowser.blob
-
+         @blob = @repobrowser.tree_blob
+         redirect @repobrowser.url 'tree' if @blob.tree?
          if @blob.binary?
             headers 'Content-Disposition' =>
                      "attachment; filename=\"#{@blob.basename}\"",
@@ -61,7 +63,8 @@ module GitBrowser
 
       get %r{/(.+)/blame/([^/]+)/(.+)$} do |*args|
          @repobrowser = RepositoryBrowser.new(*args)
-         @blob = @repobrowser.blob
+         @blob = @repobrowser.tree_blob
+         redirect @repobrowser.url 'tree' if @blob.tree?
          @blame = @repobrowser.blame
          mustache :blame
       end

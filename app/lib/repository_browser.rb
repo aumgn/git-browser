@@ -65,16 +65,10 @@ module GitBrowser
          @repo.commits(reference, path, 1, 0).first
       end
 
-      def tree
-         tree = @repo.tree_or_blob(reference, path)
-         raise NotATree unless tree.tree?
-         tree
-      end
-
-      def blob
-         blob = @repo.tree_or_blob(reference, path)
-         raise NotABlob unless blob.blob?
-         blob
+      def tree_blob
+         tree_blob = @repo.tree_or_blob(reference, path)
+         raise TreeBlobNotFound if tree_blob.nil?
+         tree_blob
       end
 
       def commits(number, skip)
@@ -115,18 +109,6 @@ module GitBrowser
       class TreeBlobNotFound < Error
          def message
             'Neither a tree nor a blob'
-         end
-      end
-
-      class NotATree < Error
-         def message
-            'Not a tree'
-         end
-      end
-
-      class NotABlob < Error
-         def message
-            'Not a blob'
          end
       end
    end
