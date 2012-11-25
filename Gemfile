@@ -9,4 +9,5 @@ gem 'mustache'
 
 group :development do
    gem 'sinatra-contrib'
+   gem 'thin', platforms: :ruby
 end

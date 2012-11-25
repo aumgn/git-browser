@@ -2,6 +2,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     backports (2.6.4)
+    daemons (1.1.9)
     diff-lcs (1.1.3)
     eventmachine (1.0.0)
     grit (2.5.0)
@@ -29,6 +30,10 @@ GEM
       rack-test
       sinatra (~> 1.3.0)
       tilt (~> 1.3)
+    thin (1.5.0)
+      daemons (>= 1.0.9)
+      eventmachine (>= 0.12.6)
+      rack (>= 1.0.0)
     tilt (1.3.3)
 
 PLATFORMS
@@ -41,3 +46,4 @@ DEPENDENCIES
   rugged
   sinatra
   sinatra-contrib
+  thin
