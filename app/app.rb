@@ -105,6 +105,10 @@ module GitBrowser
          repobrowser.archive format_name
       end
 
+      repository_get %r{/(.+)/?$} do
+         redirect @repobrowser.url 'tree', reference: nil
+      end
+
       not_found do
          if response.body.nil? or response.body.empty?
             @message = "Not found !"
