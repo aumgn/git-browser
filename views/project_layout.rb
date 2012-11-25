@@ -79,14 +79,6 @@ module GitBrowser::App::Views
          nav_link 'commits'
       end
 
-      def stats_page?
-         false
-      end
-
-      def stats_link
-         @repobrowser.url 'stats', reference: nil, path: nil
-      end
-
       def last_commit
          CommitEntry.new(@repobrowser, @repobrowser.last_commit)
       end

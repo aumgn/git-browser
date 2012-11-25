@@ -81,11 +81,6 @@ module GitBrowser
          mustache :commit
       end
 
-      get %r{/(.+)/stats/?$} do |repo_name|
-         @repobrowser = RepositoryBrowser.new(repo_name)
-         mustache :stats
-      end
-
       formats = Backend::Repository.archive_formats.keys * '|'
       archive = %r{/(.+)/(#{formats})ball(?:/([^/]+))?/?}
       get archive do |repo_name, format_name, reference = nil|
