@@ -100,22 +100,19 @@ module GitBrowser
       end
 
       error Sinatra::NotFound do
-         mustache :error, locals: {
-            message: "Not found !"
-         }
+         @message = "Not found !"
+         mustache :error
       end
 
       error RepositoryBrowser::Error do
          status 404
-         mustache :error, locals: {
-            message: env['sinatra.error'].message
-         }
+         @message = env['sinatra.error'].message
+         mustache :error
       end
 
       error do
-         mustache :error, locals: {
-            message: "An internal error occured :sad:"
-         }
+         @message = "An internal error occured :sad:"
+         mustache :error
       end
    end
 end
