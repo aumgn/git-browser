@@ -61,6 +61,10 @@ module GitBrowser
          "/#{@repo.name}/commit/#{commit.short_hash}"
       end
 
+      def last_commit
+         @repo.commits(reference, path, 1, 0).first
+      end
+
       def tree
          tree = @repo.tree_or_blob(reference, path)
          raise NotATree unless tree.tree?

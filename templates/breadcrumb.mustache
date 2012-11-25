@@ -1,4 +1,4 @@
-<ul class="breadcrumb">
+<ul class="breadcrumb{{# files_page? }} breadcrumb-with-commit{{/ files_page? }}">
 
    <li><a href="{{ repository_url }}">{{ repository_name }}</a></li>
    {{# breadcrumbs_it }}
@@ -23,4 +23,12 @@
          <i class="rss"></i>
       </a>}}
    </div>
+
+
 </ul>
+
+{{# files_page? }}
+<table class="last-commit table table-bordered">
+   {{# last_commit }}{{> commit_entry }}{{/ last_commit }}
+</table>
+{{/ files_page? }}

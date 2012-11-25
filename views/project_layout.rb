@@ -87,6 +87,10 @@ module GitBrowser::App::Views
          @repobrowser.url 'stats', reference: nil, path: nil
       end
 
+      def last_commit
+         CommitEntry.new(@repobrowser, @repobrowser.last_commit)
+      end
+
    private
 
       def nav_link(type)
